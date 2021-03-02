@@ -1,12 +1,21 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
+import Like from "./common/like";
 
 class Movies extends Component {
   state = {
     movies: getMovies(),
   };
-  onHandleDelete = (movieId) => {
-    const movies = this.state.movies.filter((m) => m._id !== movieId);
+  onHandleDelete = (movie) => {
+    const movies = this.state.movies.filter((m) => m._id !== movie._id);
+    this.setState({ movies });
+  };
+
+  handleLike = (movie) => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    movies[index] = { ...movies[index] };
+    movies[index].liked = !movies[index].liked;
     this.setState({ movies });
   };
 
@@ -29,7 +38,7 @@ class Movies extends Component {
                   <th scope="col">Genre</th>
                   <th scope="col">Stock</th>
                   <th scope="col">Rate</th>
-                  <th scope="col">Like</th>
+                  <th scope="col"></th>
                   <th scope="col"></th>
                 </tr>
               </thead>
@@ -40,11 +49,16 @@ class Movies extends Component {
                     <td>{movie.genre.name}</td>
                     <td>{movie.numberInStock}</td>
                     <td>{movie.dailyRentalRate}</td>
-                    <td></td>
+                    <td>
+                      <Like
+                        liked={movie.liked}
+                        onClick={() => this.handleLike(movie)}
+                      />
+                    </td>
                     <td>
                       <button
                         className="btn btn-sm btn-danger"
-                        onClick={() => this.onHandleDelete(movie._id)}
+                        onClick={() => this.onHandleDelete(movie)}
                       >
                         Delete
                       </button>
